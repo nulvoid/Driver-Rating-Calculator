@@ -41,12 +41,11 @@ def mainmenu():
 
 def changelog():
     os.system('cls')
-    print("v0.1 02/xx/2024")
+    print("v0.1 02/15/2024")
     input("-initial python build, port from basic to make a version i might eventually be willing to share")
 
 def todo():
     os.system('cls')
-    print("-save ratings to text file while calculating")
     print("-check weight when inputting to ensure they add up to 100%")
     print("-check normalization values to ensure they are valid iracing options")
     print("-general error handling")
@@ -169,11 +168,11 @@ def loaddata():
 
 def savedata():
     os.system('cls')
-    global rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf
+    global defaultdir,rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf
     print("Saving...")
-    filename=rostername+".txt"
+    filepath=os.path.join(defaultdir,"Rosters",rostername+".txt")
     try:
-        with open(filename, 'w') as file:
+        with open(filepath, 'w') as file:
             file.write(f"{champfinbest}")
             file.write(f"\n{champfinworst}")
             file.write(f"\n{maxrace}")
@@ -232,7 +231,7 @@ def settings():
     input("Settings saved.")
 
 def ratingcalc():
-    global rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf,winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight,normmin,normmax
+    global defaultdir,rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf,winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight,normmin,normmax
     while True:
         os.system('cls')
         print("Enter the number -1 to exit without saving.")
@@ -339,7 +338,16 @@ def ratingcalc():
         rateraf=(((driverraf-minraf)/(maxraf-minraf))*100)*rafweight
         ratellf=(((driverllf-minllf)/(maxllf-minllf))*100)*llfweight
         rating=normmin+(((ratewin+ratefive+rateten+ratepole+ratelap+rateled+ratestart+ratefin+rateraf+ratellf)*(normmax-normmin))/100)
+        #rating=int(rating+.5)
         if rating>normmax:rating=normmax
+        filepath=os.path.join(defaultdir,"Ratings",rostername+".txt")
+        ratingoutput=drivername+" "+str(round(rating))
+        try:
+            with open(filepath, 'a') as file:
+                file.write(f"{ratingoutput}\n")
+        except Exception as e:
+            print("An error occurred:", e)
+            input()
         print()
         print(f"{drivername}'s rating is:")
         input(round(rating))
@@ -363,4 +371,9 @@ if __name__=="__main__":
     maxllf,minllf=31,0
     winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight=.25,.16,.11,.06,.04,.09,.05,.12,.04,.08
     normmin,normmax=60,100
+    defaultdir=os.getcwd()
+    if not os.path.exists(os.path.join(defaultdir,"Ratings")):
+        os.makedirs(os.path.join(defaultdir,"Ratings"))
+    if not os.path.exists(os.path.join(defaultdir,"Rosters")):
+        os.makedirs(os.path.join(defaultdir,"Rosters"))
     mainmenu()
