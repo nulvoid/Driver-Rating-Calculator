@@ -42,8 +42,7 @@ def mainmenu():
 def changelog():
     os.system('cls')
     print("v0.1 02/xx/2024")
-    print("-initial python build, port from basic to make a version i might eventually be willing to share")
-    input()
+    input("-initial python build, port from basic to make a version i might eventually be willing to share")
 
 def todo():
     os.system('cls')
@@ -52,8 +51,7 @@ def todo():
     print("-check normalization values to ensure they are valid iracing options")
     print("-general error handling")
     print(" -entered value outside data range")
-    print("-have program save a text file with the settings, load existing settings if present when program starts")
-    input("-implement compensation calculation")
+    input("-have program save a text file with the settings, load existing settings if present when program starts")
 
 def viewdata():
     os.system('cls')
@@ -274,8 +272,8 @@ def ratingcalc():
         print(f"RAF: {driverraf}")
         print(f"LLF: {driverllf}")
         print()
-        print("Confirm data entry? Y/N")
-        userinput=input().lower()
+        print("Enter Y to confirm data.")
+        if (userinput:=input().lower())!="y":continue
         racestart=float(racestart)
         driverwin=float(driverwin)
         driverfive=float(driverfive)
@@ -330,18 +328,6 @@ def ratingcalc():
             driverled=(driverled/percentage)*100
             driverraf=(driverraf/percentage)*100
             driverllf=(driverllf/percentage)*100
-        else:
-            pass
-        print("The following stats are used:")
-        print(driverwin)
-        print(driverfive)
-        print(driverten)
-        print(driverpole)
-        print(driverlap)
-        print(driverled)
-        print(driverraf)
-        print(driverllf)
-        input()
         ratewin=(((driverwin-minwin)/(maxwin-minwin))*100)*winweight
         ratefive=(((driverfive-mintopfive)/(maxtopfive-mintopfive))*100)*topfiveweight
         rateten=(((driverten-mintopten)/(maxtopten-mintopten))*100)*toptenweight
@@ -356,8 +342,7 @@ def ratingcalc():
         if rating>normmax:rating=normmax
         print()
         print(f"{drivername}'s rating is:")
-        print(round(rating))
-        input()
+        input(round(rating))
 
 if __name__=="__main__":
     import os
