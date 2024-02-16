@@ -301,7 +301,6 @@ def ratingcalc():
         minlap=float(minlap)
         maxled=float(maxled)
         minled=float(minled)
-        minled=float(minled)
         worststart=float(worststart)
         bestfin=float(bestfin)
         worstfin=float(worstfin)
@@ -321,7 +320,28 @@ def ratingcalc():
         llfweight=float(llfweight)
         normmin=float(normmin)
         normmax=float(normmax)
-        if racestart<maxrace:compensatecalc()
+        if racestart<maxrace:
+            percentage=(racestart/maxrace)*100
+            driverwin=(driverwin/percentage)*100
+            driverfive=(driverfive/percentage)*100
+            driverten=(driverten/percentage)*100
+            driverpole=(driverpole/percentage)*100
+            driverlap=(driverlap/percentage)*100
+            driverled=(driverled/percentage)*100
+            driverraf=(driverraf/percentage)*100
+            driverllf=(driverllf/percentage)*100
+        else:
+            pass
+        print("The following stats are used:")
+        print(driverwin)
+        print(driverfive)
+        print(driverten)
+        print(driverpole)
+        print(driverlap)
+        print(driverled)
+        print(driverraf)
+        print(driverllf)
+        input()
         ratewin=(((driverwin-minwin)/(maxwin-minwin))*100)*winweight
         ratefive=(((driverfive-mintopfive)/(maxtopfive-mintopfive))*100)*topfiveweight
         rateten=(((driverten-mintopten)/(maxtopten-mintopten))*100)*toptenweight
@@ -338,11 +358,6 @@ def ratingcalc():
         print(f"{drivername}'s rating is:")
         print(round(rating))
         input()
-        
-def compensatecalc():
-    print("compensation")
-    input()
-    return
 
 if __name__=="__main__":
     import os
