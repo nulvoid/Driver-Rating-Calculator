@@ -2,7 +2,7 @@ def mainmenu():
     while True:
         os.system('cls')
         print("Welcome to Tyler's Driver Rating Calculator")
-        print("Python Version 0.1")
+        print("Python Version 1.0")
         print()
         print("With this tool, you can calculate a driver's rating based on their stats for a season.")
         print("This tool was made with the stats available from https://www.racing-reference.info/ in mind.")
@@ -36,14 +36,17 @@ def mainmenu():
             ratingcalc()
         elif userinput=='to do':
             todo()
-        else:
-            input("Invalid choice.")
 
 def changelog():
     os.system('cls')
     print("v0.1 02/15/2024")
-    input("-initial python build, port from basic to make a version i might eventually be willing to share")
-
+    print("-initial python build, port from basic to make a version i might eventually be willing to share")
+    print("v1.0 02/16/2024")
+    print("-now available as an executable")
+    print("-fixed several errors during saving")
+    print("-fixed incorrect file path when loading")
+    input("-adjusted normalization minimum")
+    
 def todo():
     os.system('cls')
     print("-check weight when inputting to ensure they add up to 100%")
@@ -144,20 +147,21 @@ def read_numbers_from_file(filename):
 
 def loaddata():
     os.system('cls')
-    global rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf
-    filename=input("Enter roster name to load: ").lower()
+    global defaultdir,rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf
+    rostername=input("Enter roster name to load: ").lower()
     try:
-        if not filename.endswith(".txt"):
-            filename+=".txt"
-        storage=read_numbers_from_file(filename)
+        if not rostername.endswith(".txt"):
+            rostername+=".txt"
+        filepath=os.path.join(defaultdir,"Rosters",rostername)
+        storage=read_numbers_from_file(filepath)
         if len(storage)!=24:
             input("Invalid file. Please ensure text file contains all required data.")
             return
         champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf=storage
-        rostername=filename[:-4]
+        rostername=rostername[:-4]
         input("Roster loaded.")
     except FileNotFoundError:
-        print(f"Error: File '{filename}' not found.")
+        print(f"Error: File '{rostername}' not found.")
         input()
     except ValueError:
         print("Error: The file must contain valid numbers on each line.")
@@ -181,7 +185,7 @@ def savedata():
             file.write(f"\n{minwin}")
             file.write(f"\n{maxtopfive}")
             file.write(f"\n{mintopfive}")
-            file.write(f"\n{mintopfive}")
+            file.write(f"\n{maxtopten}")
             file.write(f"\n{mintopten}")
             file.write(f"\n{maxpole}")
             file.write(f"\n{minpole}")
@@ -194,7 +198,7 @@ def savedata():
             file.write(f"\n{bestfin}")
             file.write(f"\n{worstfin}")
             file.write(f"\n{maxraf}")
-            file.write(f"\n{maxraf}")
+            file.write(f"\n{minraf}")
             file.write(f"\n{maxllf}")
             file.write(f"\n{minllf}")
         input("Data pool saved.")
@@ -338,7 +342,6 @@ def ratingcalc():
         rateraf=(((driverraf-minraf)/(maxraf-minraf))*100)*rafweight
         ratellf=(((driverllf-minllf)/(maxllf-minllf))*100)*llfweight
         rating=normmin+(((ratewin+ratefive+rateten+ratepole+ratelap+rateled+ratestart+ratefin+rateraf+ratellf)*(normmax-normmin))/100)
-        #rating=int(rating+.5)
         if rating>normmax:rating=normmax
         filepath=os.path.join(defaultdir,"Ratings",rostername+".txt")
         ratingoutput=drivername+" "+str(round(rating))
@@ -370,7 +373,7 @@ if __name__=="__main__":
     maxraf,minraf=36,0
     maxllf,minllf=31,0
     winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight=.25,.16,.11,.06,.04,.09,.05,.12,.04,.08
-    normmin,normmax=60,100
+    normmin,normmax=70,100
     defaultdir=os.getcwd()
     if not os.path.exists(os.path.join(defaultdir,"Ratings")):
         os.makedirs(os.path.join(defaultdir,"Ratings"))
