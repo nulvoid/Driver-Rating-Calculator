@@ -51,7 +51,7 @@ def EnterHTML():
         DataFrame=pd.DataFrame(rows,columns=headers)
         
         NumericColumns=['Races','Win','T5','T10','Pole','Laps','Led','AvSt','AvFn','Raf','LLF']
-        df[NumericColumns]=DataFrame[NumericColumns].apply(pd.to_numeric,errors='coerce')
+        DataFrame[NumericColumns]=DataFrame[NumericColumns].apply(pd.to_numeric,errors='coerce')
         
         MaxValues=DataFrame.max()
         MinValues=DataFrame.min()
