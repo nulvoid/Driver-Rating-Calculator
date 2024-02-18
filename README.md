@@ -1,4 +1,4 @@
-# V2.0 - Released 2/17/24
+# V2.1 - Released 2/18/24
 
 This Python program will convert a .html file containing a table of a race season's standings into a text file with the driver's name and their calculated rating. I'm hesitant to call it a skill rating calculator, but that is how I use this program.
 
