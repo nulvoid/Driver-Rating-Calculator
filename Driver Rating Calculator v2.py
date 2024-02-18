@@ -209,6 +209,7 @@ def ChangeLog():
     print("-added ability to view .html files inside program")
     print("-added print statements during calculation to show what is currently happening")
     print("-fixed error in compensation formula")
+    print("-added settings menu to change calculation parameters")
     input()
 
 if __name__=="__main__":
