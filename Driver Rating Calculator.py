@@ -17,7 +17,7 @@ def MainMenu():
     while True:
         os.system('cls')
         print("Welcome to Tyler's Driver Rating Calculator")
-        print("Python Version 2.2")
+        print("Python Version 2.2.1")
         print("\nWith this tool, you can easily generate a text file containing a list of every driver and their rating.")
         print("For information on how to prepare a .html file for use, please reference the readme.\n")
         print(f"Win weight: {int(WinWeight*100)}% Top five weight: {int(TopFiveWeight*100)}% Top ten weight: {int(TopTenWeight*100)}% Pole weight: {int(PoleWeight*100)}% Laps ran weight: {int(LapWeight*100)}%")
@@ -101,8 +101,8 @@ def CalculateRatings(row,MinWin,MinTopFive,MinTopTen,MinPole,MinLap,MinLed,MinAv
     RatePole=(((row['Pole']-MinPole)/(MaxPole-MinPole))*100)*PoleWeight
     RateLap=(((row['Laps']-MinLap)/(MaxLap-MinLap))*100)*LapWeight
     RateLed=(((row['Led']-MinLed)/(MaxLed-MinLed))*100)*LedWeight
-    RateStart=(((row['AvSt']-MinAvSt)/(MaxAvSt-MinAvSt))*100)*StartWeight
-    RateFin=(((row['AvFn']-MinAvFn)/(MaxAvFn-MinAvFn))*100)*FinWeight
+    RateStart=(((row['AvSt']-MaxAvSt)/(MinAvSt-MaxAvSt))*100)*StartWeight
+    RateFin=(((row['AvFn']-MaxAvFn)/(MinAvFn-MaxAvFn))*100)*FinWeight
     RateRAF=(((row['Raf']-MinRAF)/(MaxRAF-MinRAF))*100)*RAFWeight
     RateLLF=(((row['LLF']-MinLLF)/(MaxLLF-MinLLF))*100)*LLFWeight
     Rating=round(NormMin+(((RateWin+RateTopFive+RateTopTen+RatePole+RateLap+RateLed+RateStart+RateFin+RateRAF+RateLLF)*(NormMax-NormMin))/100))

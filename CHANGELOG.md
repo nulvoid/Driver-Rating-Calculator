@@ -29,3 +29,7 @@
 - Removed unnecessary print() statements
 - Added int() statement to ratings as they are being saved to avoid unnecessary decimals
 - Removed changelog from program, just takes up space
+
+### V2.2.1 02/19/2024
+
+- Fixed bug that penalized drivers for having better average starts and finishes
