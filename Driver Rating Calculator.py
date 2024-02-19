@@ -1,216 +1,145 @@
-def mainmenu():
+import os
+import pandas as pd
+from bs4 import BeautifulSoup
+
+WinWeight,TopFiveWeight,TopTenWeight,PoleWeight,LapWeight=.25,.16,.11,.06,.04
+LedWeight,StartWeight,FinWeight,RAFWeight,LLFWeight=.09,.05,.12,.04,.08
+NormMin,NormMax=70,100
+DefaultDir=os.getcwd()
+
+if not os.path.exists(os.path.join(DefaultDir,"Ratings")):
+    os.makedirs(os.path.join(DefaultDir,"Ratings"))
+if not os.path.exists(os.path.join(DefaultDir,"Season Files")):
+    os.makedirs(os.path.join(DefaultDir,"Season Files"))
+
+def MainMenu():
+    global WinWeight,TopFiveWeight,TopTenWeight,PoleWeight,LapWeight,LedWeight,StartWeight,FinWeight,RAFWeight,LLFWeight,NormMin,NormMax
     while True:
         os.system('cls')
         print("Welcome to Tyler's Driver Rating Calculator")
-        print("Python Version 1.0")
-        print()
-        print("With this tool, you can calculate a driver's rating based on their stats for a season.")
-        print("This tool was made with the stats available from https://www.racing-reference.info/ in mind.")
-        print()
-        print(f"Current data pool: {rostername}") #formatted string literals, Python 3.6 or later
-        print("To begin calculations, enter 'Calc'")
-        print("To load a data pool, type 'Load'")
-        print("To save the current data pool, type 'Save'")
-        print("To enter a new data pool, type 'Edit'")
-        print("To edit calculation settings, type 'Settings'")
-        print("To view all current data, type 'View'")
-        print("To view the changelog, type 'Log'")
-        print("To see the current to do list, type 'To Do'")
-        print("To quit, type 'Exit'")
+        print("Python Version 2.2")
+        print("\nWith this tool, you can easily generate a text file containing a list of every driver and their rating.")
+        print("For information on how to prepare a .html file for use, please reference the readme.\n")
+        print(f"Win weight: {int(WinWeight*100)}% Top five weight: {int(TopFiveWeight*100)}% Top ten weight: {int(TopTenWeight*100)}% Pole weight: {int(PoleWeight*100)}% Laps ran weight: {int(LapWeight*100)}%")
+        print(f"Laps led weight: {int(LedWeight*100)}% Average start weight: {int(StartWeight*100)}% Average finish weight: {int(FinWeight*100)}% RAF weight: {int(RAFWeight*100)}% LLF weight: {int(LLFWeight*100)}%")
+        print(f"Normalization minimum: {int(NormMin)}% Normalization maximum: {int(NormMax)}%")
+        print("\nTo enter a .html file to calculate ratings with, type 'Calc'")
+        print("To view a .html file, type 'View'")
+        print("To edit calculation parameters, type 'Settings'")
+        print("To quit, type 'Exit'\n")
         userinput=input(">").lower()
-        if userinput=='exit':
-            break
-        elif userinput=='log':
-            changelog()
-        elif userinput=='view':
-            viewdata()
-        elif userinput=='edit':
-            editdata()
-        elif userinput=='load':
-            loaddata()
-        elif userinput=='save':
-            savedata()
-        elif userinput=='settings':
-            settings()
-        elif userinput=='calc':
-            ratingcalc()
-        elif userinput=='to do':
-            todo()
+        if userinput=='exit':break
+        elif userinput=='calc':EnterHTML()
+        elif userinput=='view':ViewTable()
+        elif userinput=='settings':Settings()
 
-def changelog():
+def EnterHTML():
+    global DefaultDir
     os.system('cls')
-    print("v0.1 02/15/2024")
-    print("-initial python build, port from basic to make a version i might eventually be willing to share")
-    print("v1.0 02/16/2024")
-    print("-now available as an executable")
-    print("-fixed several errors during saving")
-    print("-fixed incorrect file path when loading")
-    input("-adjusted normalization minimum")
-    
-def todo():
-    os.system('cls')
-    print("-check weight when inputting to ensure they add up to 100%")
-    print("-check normalization values to ensure they are valid iracing options")
-    print("-general error handling")
-    print(" -entered value outside data range")
-    input("-have program save a text file with the settings, load existing settings if present when program starts")
-
-def viewdata():
-    os.system('cls')
-    global rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf,winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight,normmin,normmax
-    print(f"Roster name: {rostername}")
-    print(f"Best championship finish: {champfinbest}")
-    print(f"Worst championship finish: {champfinworst}")
-    print(f"Max races: {maxrace}")
-    print(f"Min races: {minrace}")
-    print(f"Max wins: {maxwin}")
-    print(f"Min wins: {minwin}")
-    print(f"Max top fives: {maxtopfive}")
-    print(f"Min top fives: {mintopfive}")
-    print(f"Max top tens: {maxtopten}")
-    print(f"Min top tens: {mintopten}")
-    print(f"Max poles: {maxpole}")
-    print(f"Min poles: {minpole}")
-    print(f"Max laps ran: {maxlap}")
-    print(f"Min laps ran: {minlap}")
-    print(f"Max laps led: {maxled}")
-    print(f"Min laps led: {minled}")
-    print(f"Best average start: {beststart}")
-    print(f"Worst average start: {worststart}")
-    print(f"Best average finish: {bestfin}")
-    print(f"Worst average finish: {worstfin}")
-    print(f"Max RAF: {maxraf}")
-    print(f"Min RAF: {minraf}")
-    print(f"Max LLF: {maxllf}")
-    print(f"Min LLF: {minllf}")
-    print(f"Win weight: {winweight*100}%")
-    print(f"Top five weight: {topfiveweight*100}%")
-    print(f"Top ten weight: {toptenweight*100}%")
-    print(f"Pole weight: {poleweight*100}%")
-    print(f"Laps ran weight: {lapweight*100}%")
-    print(f"Laps led weight: {ledweight*100}%")
-    print(f"Average start weight: {startweight*100}%")
-    print(f"Average finish weight: {finweight*100}%")
-    print(f"RAF weight: {rafweight*100}%")
-    print(f"LLF weight: {llfweight*100}%")
-    print(f"Normalization minimum: {normmin}%")
-    input(f"Normalization maximum: {normmax}%")
-
-def editdata():
-    os.system('cls')
-    global rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf
-    print("Enter the number -1 to exit without saving.")
-    prompts=[
-        "Roster name: ",
-        "Highest championship finish: ",
-        "Lowest championship finish: ",
-        "Maximum races entered: ",
-        "Minimum races entered: ",
-        "Maximum races won: ",
-        "Minimum races won: ",
-        "Maximum top fives: ",
-        "Minimum top fives: ",
-        "Maximum top tens: ",
-        "Minimum top tens: ",
-        "Maximum poles: ",
-        "Minimum poles: ",
-        "Maximum laps ran: ",
-        "Minimum laps ran: ",
-        "Maximum laps led: ",
-        "Minimum laps led: ",
-        "Best average start: ",
-        "Worst average start: ",
-        "Best average finish: ",
-        "Worst average finish: ",
-        "Maximum RAFs: ",
-        "Minimum RAFs: ",
-        "Maximum LLFs: ",
-        "Minimum LLFs: "
-    ]
-    userinputs=[]
-    for prompt in prompts:
-        userinput=input(prompt)
-        if userinput=='-1':return
-        userinputs.append(userinput)
-    if len(userinputs)==len(prompts):
-        rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf=userinputs
-    os.system('cls')
-    input("Data pool entered.")
-
-def read_numbers_from_file(filename):
-    #the function that ensures text files contain the correct number of data entries
-    numbers = []
-    with open(filename, 'r') as file:
-        for line in file:
-            numbers.append(float(line.strip()))
-    return numbers
-
-def loaddata():
-    os.system('cls')
-    global defaultdir,rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf
-    rostername=input("Enter roster name to load: ").lower()
+    UserInput=input("Enter .html file to parse: ")
     try:
-        if not rostername.endswith(".txt"):
-            rostername+=".txt"
-        filepath=os.path.join(defaultdir,"Rosters",rostername)
-        storage=read_numbers_from_file(filepath)
-        if len(storage)!=24:
-            input("Invalid file. Please ensure text file contains all required data.")
-            return
-        champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf=storage
-        rostername=rostername[:-4]
-        input("Roster loaded.")
+        if not UserInput.endswith(".html"):UserInput+=".html"
+        FilePath=os.path.join(DefaultDir,"Season Files",UserInput)
+        with open(FilePath,'r') as file:
+            html_content=file.read()
+        print("Reading .html file...")
+        soup=BeautifulSoup(html_content,'html.parser')
+        table=soup.find('table')
+        headers=[header.text.strip() for header in table.find_all('th')]
+        rows=[]
+        for row in table.find_all('tr')[1:]:
+            rows.append([data.text.strip() for data in row.find_all('td')])
+        DataFrame=pd.DataFrame(rows,columns=headers)
+        NumericColumns=['Races','Win','T5','T10','Pole','Laps','Led','AvSt','AvFn','Raf','LLF']
+        DataFrame[NumericColumns]=DataFrame[NumericColumns].apply(pd.to_numeric,errors='coerce')
+        MaxValues=DataFrame.max()
+        MinValues=DataFrame.min()
+        MaxRace,MinRace=MaxValues['Races'],MinValues['Races']
+        MaxWin,MinWin=MaxValues['Win'],MinValues['Win']
+        MaxTopFive,MinTopFive=MaxValues['T5'],MinValues['T5']
+        MaxTopTen,MinTopTen=MaxValues['T10'],MinValues['T10']
+        MaxPole,MinPole=MaxValues['Pole'],MinValues['Pole']
+        MaxLap,MinLap=MaxValues['Laps'],MinValues['Laps']
+        MaxLed,MinLed=MaxValues['Led'],MinValues['Led']
+        MaxAvSt,MinAvSt=MaxValues['AvSt'],MinValues['AvSt']
+        MaxAvFn,MinAvFn=MaxValues['AvFn'],MinValues['AvFn']
+        MaxRAF,MinRAF=MaxValues['Raf'],MinValues['Raf']
+        MaxLLF,MinLLF=MaxValues['LLF'],MinValues['LLF']
+        try:
+            print("Beginning calculations...")
+            DataFrame['RacePercentage']=(DataFrame['Races']/MaxRace)*100
+            for stat in NumericColumns:
+                if stat!='Races' and stat!='AvSt' and stat!='AvFn':
+                    DataFrame[stat]=(DataFrame[stat]/DataFrame['RacePercentage'])*100
+            DataFrame['Rating'] = DataFrame.apply(lambda row: CalculateRatings(row, MinWin, MinTopFive, MinTopTen, MinPole, MinLap, MinLed, MinAvSt, MinAvFn, MinRAF, MinLLF,MaxWin,MaxTopFive,MaxTopTen,MaxPole,MaxLap,MaxLed,MaxAvSt,MaxAvFn,MaxRAF,MaxLLF), axis=1)
+            UserInput=UserInput[:-5]
+            UserInput+=".txt"
+            FilePath=os.path.join(DefaultDir,"Ratings",UserInput)
+            print("Writing to text file...")
+            with open(FilePath,'w') as file:
+                for index, row in DataFrame.iterrows():
+                    file.write(f"{row['Driver']}: {int(row['Rating'])}\n")
+            print("Calculations and export finished.")
+            input()
+        except Exception as e:
+            print("Error:",e)
+            input()
     except FileNotFoundError:
-        print(f"Error: File '{rostername}' not found.")
-        input()
-    except ValueError:
-        print("Error: The file must contain valid numbers on each line.")
+        print(f"Error: {UserInput} not found.")
         input()
     except Exception as e:
-        print("An error occurred:", e)
+        print("Error:",e)
         input()
 
-def savedata():
+def CalculateRatings(row,MinWin,MinTopFive,MinTopTen,MinPole,MinLap,MinLed,MinAvSt,MinAvFn,MinRAF,MinLLF,MaxWin,MaxTopFive,MaxTopTen,MaxPole,MaxLap,MaxLed,MaxAvSt,MaxAvFn,MaxRAF,MaxLLF):
+    global WinWeight,TopFiveWeight,TopTenWeight,PoleWeight,LapWeight,LedWeight,StartWeight,FinWeight,RAFWeight,LLFWeight,NormMin,NormMax
+    MaxValues=row
+    MinValues=row
+    RateWin=(((row['Win']-MinWin)/(MaxWin-MinWin))*100)*WinWeight
+    RateTopFive=(((row['T5']-MinTopFive)/(MaxTopFive-MinTopFive))*100)*TopFiveWeight
+    RateTopTen=(((row['T10']-MinTopTen)/(MaxTopTen-MinTopTen))*100)*TopTenWeight
+    RatePole=(((row['Pole']-MinPole)/(MaxPole-MinPole))*100)*PoleWeight
+    RateLap=(((row['Laps']-MinLap)/(MaxLap-MinLap))*100)*LapWeight
+    RateLed=(((row['Led']-MinLed)/(MaxLed-MinLed))*100)*LedWeight
+    RateStart=(((row['AvSt']-MinAvSt)/(MaxAvSt-MinAvSt))*100)*StartWeight
+    RateFin=(((row['AvFn']-MinAvFn)/(MaxAvFn-MinAvFn))*100)*FinWeight
+    RateRAF=(((row['Raf']-MinRAF)/(MaxRAF-MinRAF))*100)*RAFWeight
+    RateLLF=(((row['LLF']-MinLLF)/(MaxLLF-MinLLF))*100)*LLFWeight
+    Rating=round(NormMin+(((RateWin+RateTopFive+RateTopTen+RatePole+RateLap+RateLed+RateStart+RateFin+RateRAF+RateLLF)*(NormMax-NormMin))/100))
+    if Rating>NormMax:Rating=NormMax
+    return Rating
+
+def ViewTable():
+    global DefaultDir
     os.system('cls')
-    global defaultdir,rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf
-    print("Saving...")
-    filepath=os.path.join(defaultdir,"Rosters",rostername+".txt")
+    UserInput=input("Enter .html file to view: ")
     try:
-        with open(filepath, 'w') as file:
-            file.write(f"{champfinbest}")
-            file.write(f"\n{champfinworst}")
-            file.write(f"\n{maxrace}")
-            file.write(f"\n{minrace}")
-            file.write(f"\n{maxwin}")
-            file.write(f"\n{minwin}")
-            file.write(f"\n{maxtopfive}")
-            file.write(f"\n{mintopfive}")
-            file.write(f"\n{maxtopten}")
-            file.write(f"\n{mintopten}")
-            file.write(f"\n{maxpole}")
-            file.write(f"\n{minpole}")
-            file.write(f"\n{maxlap}")
-            file.write(f"\n{minlap}")
-            file.write(f"\n{maxled}")
-            file.write(f"\n{minled}")
-            file.write(f"\n{beststart}")
-            file.write(f"\n{worststart}")
-            file.write(f"\n{bestfin}")
-            file.write(f"\n{worstfin}")
-            file.write(f"\n{maxraf}")
-            file.write(f"\n{minraf}")
-            file.write(f"\n{maxllf}")
-            file.write(f"\n{minllf}")
-        input("Data pool saved.")
-    except Exception as e:
-        print("An error occurred:", e)
+        pd.set_option('display.max_rows', None)
+        pd.set_option('display.max_columns', None)
+        if not UserInput.endswith(".html"):UserInput+=".html"
+        FilePath=os.path.join(DefaultDir,"Season Files",UserInput)
+        with open(FilePath,'r') as file:
+            html_content=file.read()
+        soup=BeautifulSoup(html_content,'html.parser')
+        table=soup.find('table')
+        headers=[header.text.strip() for header in table.find_all('th')]
+        rows=[]
+        for row in table.find_all('tr')[1:]:
+            rows.append([data.text.strip() for data in row.find_all('td')])
+        DataFrame=pd.DataFrame(rows,columns=headers)
+        print(DataFrame)
         input()
-  
-def settings():
+    except FileNotFoundError:
+        print(f"Error: {UserInput} not found.")
+        input()
+    except Exception as e:
+        print("Error:",e)
+        input()
+
+def Settings():
+    global WinWeight,TopFiveWeight,TopTenWeight,PoleWeight,LapWeight,LedWeight,StartWeight,FinWeight,RAFWeight,LLFWeight,NormMin,NormMax
     os.system('cls')
-    global winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight,normmin,normmax
-    print("Enter the number -1 to exit without saving.")
-    prompts=[
+    Prompts=[
         "Win weight%: ",
         "Top five weight%: ",
         "Top ten weight%: ",
@@ -224,159 +153,38 @@ def settings():
         "Normalization minimum: ",
         "Normalization maximum: ",
     ]
-    userinputs=[]
-    for prompt in prompts:
-        userinput=input(prompt)
-        if userinput=='-1':return
-        userinputs.append(userinput)
-    if len(userinputs)==len(prompts):
-        winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight,normmin,normmax=userinputs
-    os.system('cls')
-    input("Settings saved.")
-
-def ratingcalc():
-    global defaultdir,rostername,champfinbest,champfinworst,maxrace,minrace,maxwin,minwin,maxtopfive,mintopfive,maxtopten,mintopten,maxpole,minpole,maxlap,minlap,maxled,minled,beststart,worststart,bestfin,worstfin,maxraf,minraf,maxllf,minllf,winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight,normmin,normmax
-    while True:
-        os.system('cls')
-        print("Enter the number -1 to exit without saving.")
-        prompts=[
-            "Driver name: ",
-            "Races started: ",
-            "Races won: ",
-            "Top fives: ",
-            "Top tens: ",
-            "Poles: ",
-            "Laps ran: ",
-            "Laps led: ",
-            "Average start: ",
-            "Average finish: ",
-            "RAF: ",
-            "LLF: "
-        ]
-        userinputs=[]
-        for prompt in prompts:
-            userinput=input(prompt)
-            if userinput=='-1':return
-            userinputs.append(userinput)
-        if len(userinputs)==len(prompts):
-            drivername,racestart,driverwin,driverfive,driverten,driverpole,driverlap,driverled,driverstart,driverfin,driverraf,driverllf=userinputs
-        os.system('cls')
-        print()
-        print(f"Driver name: {drivername}")
-        print(f"Races started: {racestart}")
-        print(f"Races won: {driverwin}")
-        print(f"Top fives: {driverfive}")
-        print(f"Top tens: {driverten}")
-        print(f"Poles: {driverpole}")
-        print(f"Laps ran: {driverlap}")
-        print(f"Laps led: {driverled}")
-        print(f"Average start: {driverstart}")
-        print(f"Average finish: {driverfin}")
-        print(f"RAF: {driverraf}")
-        print(f"LLF: {driverllf}")
-        print()
-        print("Enter Y to confirm data.")
-        if (userinput:=input().lower())!="y":continue
-        racestart=float(racestart)
-        driverwin=float(driverwin)
-        driverfive=float(driverfive)
-        driverten=float(driverten)
-        driverpole=float(driverpole)
-        driverlap=float(driverlap)
-        driverled=float(driverled)
-        driverstart=float(driverstart)
-        driverfin=float(driverfin)
-        driverraf=float(driverraf)
-        driverllf=float(driverllf)
-        maxrace=float(maxrace)
-        minrace=float(minrace)
-        maxwin=float(maxwin)
-        minwin=float(minwin)
-        maxtopfive=float(maxtopfive)
-        mintopfive=float(mintopfive)
-        maxtopten=float(maxtopten)
-        mintopten=float(mintopten)
-        maxpole=float(maxpole)
-        minpole=float(minpole)
-        maxlap=float(maxlap)
-        minlap=float(minlap)
-        maxled=float(maxled)
-        minled=float(minled)
-        worststart=float(worststart)
-        bestfin=float(bestfin)
-        worstfin=float(worstfin)
-        maxraf=float(maxraf)
-        minraf=float(minraf)
-        maxllf=float(maxllf)
-        minllf=float(minllf)
-        winweight=float(winweight)
-        topfiveweight=float(topfiveweight)
-        toptenweight=float(toptenweight)
-        poleweight=float(poleweight)
-        lapweight=float(lapweight)
-        ledweight=float(ledweight)
-        startweight=float(startweight)
-        finweight=float(finweight)
-        rafweight=float(rafweight)
-        llfweight=float(llfweight)
-        normmin=float(normmin)
-        normmax=float(normmax)
-        if racestart<maxrace:
-            percentage=(racestart/maxrace)*100
-            driverwin=(driverwin/percentage)*100
-            driverfive=(driverfive/percentage)*100
-            driverten=(driverten/percentage)*100
-            driverpole=(driverpole/percentage)*100
-            driverlap=(driverlap/percentage)*100
-            driverled=(driverled/percentage)*100
-            driverraf=(driverraf/percentage)*100
-            driverllf=(driverllf/percentage)*100
-        ratewin=(((driverwin-minwin)/(maxwin-minwin))*100)*winweight
-        ratefive=(((driverfive-mintopfive)/(maxtopfive-mintopfive))*100)*topfiveweight
-        rateten=(((driverten-mintopten)/(maxtopten-mintopten))*100)*toptenweight
-        ratepole=(((driverpole-minpole)/(maxpole-minpole))*100)*poleweight
-        ratelap=(((driverlap-minlap)/(maxlap-minlap))*100)*lapweight
-        rateled=(((driverled-minled)/(maxled-minled))*100)*ledweight
-        ratestart=(((driverstart-worststart)/(beststart-worststart))*100)*startweight
-        ratefin=(((driverfin-worstfin)/(bestfin-worstfin))*100)*finweight
-        rateraf=(((driverraf-minraf)/(maxraf-minraf))*100)*rafweight
-        ratellf=(((driverllf-minllf)/(maxllf-minllf))*100)*llfweight
-        rating=normmin+(((ratewin+ratefive+rateten+ratepole+ratelap+rateled+ratestart+ratefin+rateraf+ratellf)*(normmax-normmin))/100)
-        if rating>normmax:rating=normmax
-        filepath=os.path.join(defaultdir,"Ratings",rostername+".txt")
-        ratingoutput=drivername+" "+str(round(rating))
-        try:
-            with open(filepath, 'a') as file:
-                file.write(f"{ratingoutput}\n")
-        except Exception as e:
-            print("An error occurred:", e)
-            input()
-        print()
-        print(f"{drivername}'s rating is:")
-        input(round(rating))
+    UserInputs=[]
+    for Prompt in Prompts:
+        while True:
+            UserInput=input(Prompt)
+            if UserInput.strip():
+                if not UserInput.strip().replace('.','').isdigit():
+                    print("Please enter a number.")
+                else:
+                    break
+            else:
+                print("Please enter a value.")
+        UserInputs.append(UserInput)
+    if len(UserInputs)==len(Prompts):
+        UserInputs=[float(value) for value in UserInputs]
+        WinWeight,TopFiveWeight,TopTenWeight,PoleWeight,LapWeight,LedWeight,StartWeight,FinWeight,RAFWeight,LLFWeight,NormMin,NormMax=UserInputs
+        TotalWeight=WinWeight+TopFiveWeight+TopTenWeight+PoleWeight+LapWeight+LedWeight+StartWeight+FinWeight+RAFWeight+LLFWeight
+        if TotalWeight!=100:
+            print("Selected weights do not equal 100%. Setting default weight values.")
+            WinWeight,TopFiveWeight,TopTenWeight,PoleWeight,LapWeight=.25,.16,.11,.06,.04
+            LedWeight,StartWeight,FinWeight,RAFWeight,LLFWeight=.09,.05,.12,.04,.08
+        else:
+            for VariableName in ['WinWeight','TopFiveWeight','TopTenWeight','PoleWeight','LapWeight','LedWeight','StartWeight','FinWeight','RAFWeight','LLFWeight']:
+                globals()[VariableName]/=100
+        if NormMin>NormMax or NormMin<0 or NormMax>125 or NormMin!=int(NormMin) or NormMax!=int(NormMax):
+            print("Invalid normalization values. Setting default normalization values.")
+            NormMin,NormMax=70,100
+    print("Settings saved.")
+    print(f"Win weight: {int(WinWeight*100)}% Top five weight: {int(TopFiveWeight*100)}% Top ten weight: {int(TopTenWeight*100)}% Pole weight: {int(PoleWeight*100)}% Laps ran weight: {int(LapWeight*100)}%")
+    print(f"Laps led weight: {int(LedWeight*100)}% Average start weight: {int(StartWeight*100)}% Average finish weight: {int(FinWeight*100)}% RAF weight: {int(RAFWeight*100)}% LLF weight: {int(LLFWeight*100)}%")
+    print(f"Normalization minimum: {int(NormMin)}% Normalization maximum: {int(NormMax)}%")
+    input()
+    return WinWeight,TopFiveWeight,TopTenWeight,PoleWeight,LapWeight,LedWeight,StartWeight,FinWeight,RAFWeight,LLFWeight,NormMin,NormMax
 
 if __name__=="__main__":
-    import os
-    #this program was originally made because i needed to calculate driver ratings for the 2009 cup series
-    #ive calculated jimmie johnson's rating so many times that i just use the 2009 season by default lol
-    rostername="2009 nascar cup series"
-    champfinbest,champfinworst=1,67
-    maxrace,minrace=36,1
-    maxwin,minwin=7,0
-    maxtopfive,mintopfive=16,0
-    maxtopten,mintopten=25,0
-    maxpole,minpole=7,0
-    maxlap,minlap=10468,8
-    maxled,minled=2238,0
-    beststart,worststart=8.3,43
-    bestfin,worstfin=10.2,43
-    maxraf,minraf=36,0
-    maxllf,minllf=31,0
-    winweight,topfiveweight,toptenweight,poleweight,lapweight,ledweight,startweight,finweight,rafweight,llfweight=.25,.16,.11,.06,.04,.09,.05,.12,.04,.08
-    normmin,normmax=70,100
-    defaultdir=os.getcwd()
-    if not os.path.exists(os.path.join(defaultdir,"Ratings")):
-        os.makedirs(os.path.join(defaultdir,"Ratings"))
-    if not os.path.exists(os.path.join(defaultdir,"Rosters")):
-        os.makedirs(os.path.join(defaultdir,"Rosters"))
-    mainmenu()
+    MainMenu()
