@@ -1,6 +1,6 @@
 # V2.2.1 - Released 2/19/24
 
-This Python program will convert a .html file containing a table of a race season's standings into a text file with the driver's name and their calculated rating. I'm hesitant to call it a skill rating calculator, but that is how I use this program. I originally wrote this program in BASIC (JustBasic specificially) because I wanted to use semi-realistic skill ratings in my AI rosters. I got sick of using ChatGPT to give me ratings, and they were highly inconsistent, so eventually I wrote this in BASIC. I have a way better understanding of BASIC than Python because I started programming on a TI-83 calculator when I was in middle school lol. The entire time I craved a program that I could just enter an entire season's worth of data into and get ratings, which is why I switched to Python. The first version of this program in Python was very similar to the BASIC version, requiring you to enter the stats for every single driver manually. I got sick of that very quickly though, and I'm sure you would too. After a lot of caffeine and weed, I finally learned how to write the program that I (mostly) wanted. I really wanted to be able to just enter a link and it does all the work for me, but I have absolutely no real training in any programming language and to be honest, I'm very lazy. I know it looks like I'm writing this all up and sharing it on Github with the intent of sharing this with many people to use, but realistically, I don't see any more than a handful of people other than me using this. The biggest reason I have this on here is because I was too stupid to make actual backups of the BASIC version of this program, and ended up losing days of work spread out over a span of two months because I had to reinstall Windows on my computer. Thankfully, for me, I had a version of the program from 1/05/24 backed up on my laptop. Only issue is, I had been working on it every couple of days and had lost a lot of changes and quality of life improvements I made over the course of a month. I am not letting that happen this time lol. In a way, I guess you could say I have been working on this program for three months now, since I started the BASIC version on 11/11/23.
+This Python program will convert a .html file containing a table of a race season's standings into a text file with the driver's name and their calculated rating, as well as eppend those ratings and randomize the values of optimism, aggression, smoothness, stretegy riskiness, and pit crew skill based on the driver's calculated rating. The randomization is split into three skill levels; high (90-100), medium (80-89), and low (0-79). I'm hesitant to call it a skill rating calculator, but that is how I use this program. I originally wrote this program in BASIC (JustBASIC specificially) because I wanted to use semi-realistic skill ratings in my AI rosters. I got sick of using ChatGPT to give me ratings, and they were highly inconsistent, so eventually I wrote this in BASIC. I have a way better understanding of BASIC than Python because I started programming on a TI-83 calculator when I was in middle school lol. The entire time I craved a program that I could just enter an entire season's worth of data into and get ratings, which is why I switched to Python. The first version of this program in Python was very similar to the BASIC version, requiring you to enter the stats for every single driver manually. I got sick of that very quickly though, and I'm sure you would too. After a lot of caffeine and weed, I finally learned how to write the program that I (mostly) wanted. I really wanted to be able to just enter a link and it does all the work for me, but I have absolutely no real training in any programming language and to be honest, I'm very lazy. I know it looks like I'm writing this all up and sharing it on Github with the intent of sharing this with many people to use, but realistically, I don't see any more than a handful of people other than me using this. The biggest reason I have this on here is because I was too stupid to make actual backups of the BASIC version of this program, and ended up losing days of work spread out over a span of two months because I had to reinstall Windows on my computer. Thankfully, for me, I had a version of the program from 1/05/24 backed up on my laptop. Only issue is, I had been working on it every couple of days and had lost a lot of changes and quality of life improvements I made over the course of a month. I am not letting that happen this time lol. In a way, I guess you could say I have been working on this program for three months now, since I started the BASIC version on 11/11/23.
 
 ## Requirements
 
@@ -9,9 +9,12 @@ This Python program will convert a .html file containing a table of a race seaso
 - BeautifulSoup4
 - Racing Reference season standings with all required data
   - For example, the 1987 Busch North Series cannot be calculated because it is missing average start data for a number of drivers
+- iRacing AI roster to edit
 
-The required Python libraries can be installed with the pip command in your terminal.\
+The required Python libraries can be installed with the pip command in your terminal.
+
     ```pip install pandas```
+    
     ```pip install beautifulsoup4```
 
 ## Preparing a .html file
@@ -26,9 +29,16 @@ The required Python libraries can be installed with the pip command in your term
 
 4. Save the HTML code as the season's name in the Season Files folder.
 
-## Using the program
+## Using the calculator
 
-1. When you have your .html ready, run the program.
+1. When you have your files ready, run the program.
 2. Type **calc** and press enter to start the program.
 3. Enter the name of the .html file you created and press enter.
 4. The program will save a text file of the same name in the Ratings folder.
+
+## Using the appender
+
+1. When you have your files ready, type **append** and press enter to begin the process.
+2. Enter the name of the iRacing AI roster you want to edit.
+3. Enter the name of the text file generated by the Driver Rating Calculator program containing the driver ratings.
+4. The program will attempt to append calculated ratings and randomize stats for all drivers in the AI roster. All drivers the program was able to locate in the .txt file will be displayed with their calculated rating, and all drivers not found in the .txt file but found in the .json will be displayed in a list. If a driver is not found in the .txt file, that driver's stats will not be edited in the .json. Most of the time, drivers will not be found due to simple spelling errors.
