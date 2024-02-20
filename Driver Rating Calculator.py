@@ -23,7 +23,7 @@ def MainMenu():
     while True:
         os.system('cls')
         print("Welcome to Tyler's Driver Rating Calculator")
-        print("Python Version 2.3.0")
+        print("Python Version 2.3.1")
         print("\nWith this tool, you can easily generate driver ratings and append them to AI rosters.")
         print("For information on how to prepare a .html file for use, please reference the readme.\n")
         print(f"Win weight: {int(WinWeight*100)}% Top five weight: {int(TopFiveWeight*100)}% Top ten weight: {int(TopTenWeight*100)}% Pole weight: {int(PoleWeight*100)}% Laps ran weight: {int(LapWeight*100)}%")
@@ -46,10 +46,11 @@ def EnterHTML():
     os.system('cls')
     UserInput=input("Enter .html file to parse: ")
     try:
-        if not UserInput.endswith(".html"):UserInput+=".html"
+        if not UserInput.endswith(".html"):
+            UserInput+=".html"
         FilePath=os.path.join(DefaultDir,"Season Files",UserInput)
         with open(FilePath,'r') as file:
-            html_content=file.read()
+            html_content = file.read()
         print("Reading .html file...")
         soup=BeautifulSoup(html_content,'html.parser')
         table=soup.find('table')
@@ -75,17 +76,17 @@ def EnterHTML():
         MaxLLF,MinLLF=MaxValues['LLF'],MinValues['LLF']
         try:
             print("Beginning calculations...")
-            DataFrame['RacePercentage']=(DataFrame['Races']/MaxRace)*100
+            DataFrame.loc[:,'RacePercentage']=(DataFrame['Races']/MaxRace)*100
             for stat in NumericColumns:
                 if stat!='Races' and stat!='AvSt' and stat!='AvFn':
-                    DataFrame[stat]=(DataFrame[stat]/DataFrame['RacePercentage'])*100
-            DataFrame['Rating'] = DataFrame.apply(lambda row: CalculateRatings(row, MinWin, MinTopFive, MinTopTen, MinPole, MinLap, MinLed, MinAvSt, MinAvFn, MinRAF, MinLLF,MaxWin,MaxTopFive,MaxTopTen,MaxPole,MaxLap,MaxLed,MaxAvSt,MaxAvFn,MaxRAF,MaxLLF), axis=1)
+                    DataFrame.loc[:,stat]=(DataFrame[stat]/DataFrame['RacePercentage']*100).astype(int)
+            DataFrame['Rating']=DataFrame.apply(lambda row:CalculateRatings(row,MinWin,MinTopFive,MinTopTen,MinPole,MinLap,MinLed,MinAvSt,MinAvFn,MinRAF,MinLLF,MaxWin,MaxTopFive,MaxTopTen,MaxPole,MaxLap,MaxLed,MaxAvSt,MaxAvFn,MaxRAF,MaxLLF),axis=1)
             UserInput=UserInput[:-5]
             UserInput+=".txt"
             FilePath=os.path.join(DefaultDir,"Ratings",UserInput)
             print("Writing to text file...")
             with open(FilePath,'w') as file:
-                for index, row in DataFrame.iterrows():
+                for index,row in DataFrame.iterrows():
                     file.write(f"{row['Driver']}: {int(row['Rating'])}\n")
             print("Calculations and export finished.")
             input()

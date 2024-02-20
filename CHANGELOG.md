@@ -37,3 +37,7 @@
 ### V2.3.0 02/20/2024
 
 - Added roster editor functionality to rating calculator program
+
+### V2.3.1 02/20/2024
+
+- Fixed future compatibility issue with pandas library
