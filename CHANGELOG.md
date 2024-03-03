@@ -41,3 +41,9 @@
 ### V2.3.1 02/20/2024
 
 - Fixed future compatibility issue with pandas library
+
+### V2.4.0 03/03/2024
+
+- Added compatibility for championship stats that use podiums instead of top fives and top tens
+- Removed settings option due to the fact I will not be offering this compiled, so all parameters can be easily adjusted by the user using any text editor
+	- For the purposes of this program, these will be refered to as Traditional Motorsport Standings, as opposed to NASCAR-Style Standings
